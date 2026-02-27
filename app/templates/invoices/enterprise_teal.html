@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Invoice - Alphabit Technologies</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-size: 8.2pt;
+            color: #333;
+            line-height: 1.25;
+        }
+
+        .banner {
+            background-color: #004d40;
+            color: white;
+            padding: 15px 30px;
+            display: table;
+            width: 100%;
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .banner-cell {
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .container {
+            padding: 15px 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            table-layout: fixed;
+        }
+
+        th {
+            background-color: #f0f7f6;
+            color: #004d40;
+            text-align: left;
+            padding: 6px 10px;
+            font-weight: 700;
+            font-size: 7.5pt;
+            text-transform: uppercase;
+            -webkit-print-color-adjust: exact;
+        }
+
+        td {
+            padding: 6px 10px;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+            word-wrap: break-word;
+        }
+
+        .total-strip {
+            background-color: #004d40;
+            color: white;
+            padding: 6px 15px;
+            font-weight: 800;
+            font-size: 11pt;
+            text-align: right;
+            display: inline-block;
+            margin-top: 5px;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .bank-box {
+            border: 1px solid #b2dfdb;
+            border-left: 3.5px solid #004d40;
+            padding: 8px 12px;
+            width: 50%;
+            font-size: 7.5pt;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="banner">
+        <div class="banner-cell">
+            <h1 style="margin: 0; font-size: 16pt; letter-spacing: 1px; font-weight: 900;">INVOICE</h1>
+            <div style="font-size: 8.5pt; opacity: 0.9;"># {{ invoice_number }}</div>
+        </div>
+        <div class="banner-cell" style="text-align: right;">
+            <div style="font-size: 13pt; font-weight: 800;">Alphabit Technologies</div>
+            <div style="font-size: 7.5pt; opacity: 0.8;">GSTIN: 33AACCA1234A1Z5</div>
+            <div style="font-size: 7.5pt; opacity: 0.8;">No. 12/24, Innovation Hub, Chennai, TN</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div
+            style="display: table; width: 100%; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+            <div style="display: table-cell; width: 50%; vertical-align: top;">
+                <div
+                    style="color: #004d40; font-weight: 800; text-transform: uppercase; font-size: 7pt; margin-bottom: 3px;">
+                    Billed To</div>
+                <div style="font-weight: 700; font-size: 9pt;">{{ customer.name }}</div>
+                <div style="color: #555; width: 85%;">{{ customer.address }}</div>
+            </div>
+            <div style="display: table-cell; width: 50%; text-align: right; vertical-align: top;">
+                <div
+                    style="color: #004d40; font-weight: 800; text-transform: uppercase; font-size: 7pt; margin-bottom: 3px;">
+                    Timeline</div>
+                <div><strong>Invoice Date:</strong> {{ date }}</div>
+                <div><strong>Payment Due:</strong> {{ due_date }}</div>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th width="50%">Description</th>
+                    <th width="12%">HSN</th>
+                    <th style="text-align: right;" width="8%">Qty</th>
+                    <th style="text-align: right;" width="15%">Rate</th>
+                    <th style="text-align: right;" width="15%">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>
+                        <div style="font-weight: 700;">{{ item.desc }}</div>
+                        {% if item.notes %}<div style="font-size: 7.5pt; color: #666; margin-top: 1px;">{{ item.notes }}
+                        </div>{% endif %}
+                    </td>
+                    <td style="color: #666;">{{ item.hsn or '---' }}</td>
+                    <td style="text-align: right;">{{ item.qty }}</td>
+                    <td style="text-align: right;">{{ "%.2f"|format(item.rate) }}</td>
+                    <td style="text-align: right; font-weight: 700; color: #004d40;">{{ "%.2f"|format(item.qty *
+                        item.rate) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="display: table; width: 100%;">
+            <div style="display: table-cell; vertical-align: top;">
+                <div class="bank-box">
+                    <div
+                        style="color: #004d40; font-weight: 800; text-transform: uppercase; font-size: 7pt; margin-bottom: 4px;">
+                        Bank Account Details</div>
+                    <div style="font-weight: 700;">{{ bank.bank_name }}</div>
+                    <div>A/C: {{ bank.account_no }} | IFSC: {{ bank.ifsc }}</div>
+                    <div>Name: {{ bank.account_name }}</div>
+                </div>
+            </div>
+            <div style="display: table-cell; text-align: right; vertical-align: top; width: 40%;">
+                <div style="margin-bottom: 3px;">Subtotal: <strong>₹ {{ "%.2f"|format(subtotal) }}</strong></div>
+                <div style="margin-bottom: 5px;">Tax ({{ tax_rate }}%): <strong>₹ {{ "%.2f"|format(tax_amount)
+                        }}</strong></div>
+                <div class="total-strip">
+                    TOTAL DUE: ₹ {{ "%.2f"|format(total) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

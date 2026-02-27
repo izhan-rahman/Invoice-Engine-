@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Distribution / Packaging
+dist/
+build/
+*.egg-info/
+
+# Logs
+*.log
+
+# Editor
+.vscode/
+.idea/
+
+# Project Specific
+# Exclude the downloaded GTK runtime (setup_env.py handles this)
+bin/gtk3/
+# Exclude temporary scripts
+verify_*.py
+expose_server.py
+
+# Test/QA output files
+qa_results*.txt
+qa_results_final.txt
+test_results.txt
+test_invoice.pdf
+
+# Windows-only helper scripts (not needed on Linux server)
+expose_public.bat
+setup_git.bat
+setup_env.py
