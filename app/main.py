@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request, BackgroundTasks, Query
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, Response, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -8,6 +9,15 @@ from app.api.demo_router import router as demo_router
 import requests
 
 app = FastAPI(title="Invoice Engine Pro")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
+
 app.include_router(demo_router)
 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
