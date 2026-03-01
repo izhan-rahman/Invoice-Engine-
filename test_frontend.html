@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Engine - Form Tester</title>
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --secondary: #10B981;
+            --secondary-hover: #059669;
+            --bg-color: #F3F4F6;
+            --surface: #FFFFFF;
+            --text-main: #111827;
+            --text-muted: #6B7280;
+            --border-color: #E5E7EB;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background-color: var(--surface);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            height: fit-content;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        h2 {
+            margin: 0 0 1rem 0;
+            font-size: 1.25rem;
+            color: var(--text-main);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .form-row>.form-group {
+            flex: 1;
+        }
+
+        label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        input,
+        select,
+        textarea {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.875rem;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+        }
+
+        .item-row {
+            display: grid;
+            grid-template-columns: 2fr 2fr 1fr 1fr 1fr 1fr auto;
+            gap: 0.5rem;
+            align-items: center;
+            background: #F9FAFB;
+            padding: 0.5rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-rm {
+            background: #EF4444;
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-add {
+            background: #E5E7EB;
+            color: #374151;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-block;
+            width: fit-content;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn-main {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+        }
+
+        .btn-preview {
+            background-color: var(--primary);
+        }
+
+        .btn-download {
+            background-color: var(--secondary);
+        }
+
+        #pdf-viewer {
+            width: 100%;
+            height: 600px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #F9FAFB;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 600px;
+            color: var(--text-muted);
+            background-color: #F9FAFB;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+        }
+
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div>
+        <h1>Invoice Builder UI</h1>
+        <p class="subtitle">Testing interface for <b>https://alpha-invoice-engine.onrender.com</b></p>
+    </div>
+
+    <div class="container">
+        <!-- Input Section -->
+        <div class="card">
+            <h2>1. Enter Invoice Details</h2>
+
+            <form id="invoice-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Invoice Number</label>
+                        <input type="text" id="inv-num" value="INV-2024-001" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Template Style</label>
+                        <select id="inv-template">
+                            <option value="zoho_blue">Zoho Blue</option>
+                            <option value="modern_minimal">Modern Minimal</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Invoice Date</label>
+                        <input type="date" id="inv-date" value="2024-10-01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Due Date</label>
+                        <input type="date" id="inv-due" value="2024-10-15" required>
+                    </div>
+                </div>
+
+                <h3>Customer Details</h3>
+                <div class="form-group">
+                    <label>Customer Name</label>
+                    <input type="text" id="cust-name" value="Acme Corporation" required>
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <input type="text" id="cust-addr" value="123 Example Street, Tech City, 10001">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>GSTIN / Tax ID</label>
+                        <input type="text" id="cust-gstin" value="GST9876543210ABC">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="cust-email" value="billing@acmecorp.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="text" id="cust-phone" value="+1 (555) 123-4567">
+                    </div>
+                </div>
+
+                <h3>Line Items</h3>
+                <div id="items-container">
+                    <div class="item-row" data-index="0">
+                        <input type="text" class="i-desc" placeholder="Item Name" value="Web Development" required>
+                        <input type="text" class="i-notes" placeholder="Notes" value="Frontend build">
+                        <input type="text" class="i-hsn" placeholder="HSN" value="998311">
+                        <input type="number" class="i-qty" placeholder="Qty" value="1" min="1" required>
+                        <input type="number" class="i-rate" placeholder="Rate" value="1500" step="0.01" required>
+                        <select class="i-tax">
+                            <option value="IGST">IGST</option>
+                            <option value="CGST/SGST">CGST/SGST</option>
+                            <option value="NONE">NONE</option>
+                        </select>
+                        <button type="button" class="btn-rm" onclick="this.parentElement.remove()">X</button>
+                    </div>
+                </div>
+                <button type="button" class="btn-add" onclick="addItem()">+ Add Item</button>
+
+                <div class="form-row" style="margin-top: 1rem;">
+                    <div class="form-group">
+                        <label>Global Tax Rate (%)</label>
+                        <input type="number" id="inv-tax-rate" value="18" min="0" max="100">
+                    </div>
+                </div>
+
+            </form>
+
+            <div class="button-group">
+                <button class="btn-main btn-preview" onclick="generate('preview')" id="btn-preview">
+                    <span class="spinner" id="spinner-preview"></span>
+                    👁️ Preview PDF
+                </button>
+                <button class="btn-main btn-download" onclick="generate('download')" id="btn-download">
+                    <span class="spinner" id="spinner-download"></span>
+                    📥 Download File
+                </button>
+            </div>
+            <div id="error-msg" style="color: #DC2626; margin-top: 1rem; font-size: 0.875rem; display: none;"></div>
+        </div>
+
+        <!-- Output Section -->
+        <div class="card">
+            <h2>2. Generated Result</h2>
+            <div id="viewer-container" style="height: 100%;">
+                <div class="empty-state" id="empty-state">
+                    <p style="font-size: 3rem; margin: 0;">📄</p>
+                    <p>Building the PDF might take a few seconds on Render's free tier. Click "Preview PDF" to start!
+                    </p>
+                </div>
+                <iframe id="pdf-viewer" style="display: none;"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Use the live URL or fallback to localhost if developing locally and Render is asleep
+        const BASE_URL = "http://localhost:8000";
+
+        function addItem() {
+            const container = document.getElementById('items-container');
+            const newRow = document.createElement('div');
+            newRow.className = 'item-row';
+            newRow.innerHTML = `
+                <input type="text" class="i-desc" placeholder="Item Name" required>
+                <input type="text" class="i-notes" placeholder="Notes">
+                <input type="text" class="i-hsn" placeholder="HSN">
+                <input type="number" class="i-qty" placeholder="Qty" value="1" min="1" required>
+                <input type="number" class="i-rate" placeholder="Rate" value="0" step="0.01" required>
+                <select class="i-tax">
+                    <option value="IGST">IGST</option>
+                    <option value="CGST/SGST">CGST/SGST</option>
+                    <option value="NONE">NONE</option>
+                </select>
+                <button type="button" class="btn-rm" onclick="this.parentElement.remove()">X</button>
+            `;
+            container.appendChild(newRow);
+        }
+
+        function buildPayload() {
+            const items = [];
+            document.querySelectorAll('.item-row').forEach(row => {
+                items.push({
+                    desc: row.querySelector('.i-desc').value,
+                    notes: row.querySelector('.i-notes').value,
+                    hsn: row.querySelector('.i-hsn').value,
+                    qty: parseFloat(row.querySelector('.i-qty').value),
+                    rate: parseFloat(row.querySelector('.i-rate').value),
+                    tax_type: row.querySelector('.i-tax').value
+                });
+            });
+
+            return {
+                invoice_number: document.getElementById('inv-num').value,
+                date: document.getElementById('inv-date').value,
+                due_date: document.getElementById('inv-due').value,
+                customer: {
+                    name: document.getElementById('cust-name').value,
+                    address: document.getElementById('cust-addr').value,
+                    gstin: document.getElementById('cust-gstin').value,
+                    email: document.getElementById('cust-email').value,
+                    phone: document.getElementById('cust-phone').value
+                },
+                items: items,
+                tax_rate: parseFloat(document.getElementById('inv-tax-rate').value) || 0,
+                template_style: document.getElementById('inv-template').value
+            };
+        }
+
+        async function generate(action) {
+            const errorMsg = document.getElementById('error-msg');
+            const pdfViewer = document.getElementById('pdf-viewer');
+            const emptyState = document.getElementById('empty-state');
+
+            errorMsg.style.display = 'none';
+
+            // Validate form
+            if (!document.getElementById('invoice-form').checkValidity()) {
+                document.getElementById('invoice-form').reportValidity();
+                return;
+            }
+
+            const payload = buildPayload();
+            const btnId = action === 'preview' ? 'btn-preview' : 'btn-download';
+            const spinId = action === 'preview' ? 'spinner-preview' : 'spinner-download';
+
+            document.getElementById(btnId).disabled = true;
+            document.getElementById(spinId).style.display = 'block';
+
+            try {
+                const endpoint = action === 'preview' ? 'preview' : 'download';
+                const response = await fetch(`${BASE_URL}/${endpoint}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/pdf'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server Status: ${response.status}`);
+                }
+
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+
+                if (action === 'preview') {
+                    emptyState.style.display = 'none';
+                    pdfViewer.style.display = 'block';
+                    pdfViewer.src = blobUrl;
+                } else {
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = blobUrl;
+                    a.download = `Invoice_${payload.invoice_number}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(blobUrl);
+                }
+            } catch (error) {
+                errorMsg.innerText = `Error: ${error.message} - Make sure the Render URL is live.`;
+                errorMsg.style.display = 'block';
+            } finally {
+                document.getElementById(btnId).disabled = false;
+                document.getElementById(spinId).style.display = 'none';
+            }
+        }
+    </script>
+</body>
+
+</html>

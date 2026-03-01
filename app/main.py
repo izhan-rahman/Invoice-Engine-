@@ -97,11 +97,29 @@ async def debug_external_sales(do_no: str, plant: str = "test"):
 
 # --- TRADITIONAL ENDPOINTS ---
 
+@app.options("/preview")
+async def options_preview():
+    headers = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "*"
+    }
+    return Response(status_code=200, headers=headers)
+
 @app.post("/preview")
 async def preview_invoice(request: Request):
     data = await request.json()
     pdf_bytes = generate_pdf_bytes(data)
     return Response(content=pdf_bytes, media_type="application/pdf")
+
+@app.options("/download")
+async def options_download():
+    headers = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "*"
+    }
+    return Response(status_code=200, headers=headers)
 
 @app.post("/download")
 async def download_invoice(request: Request):
