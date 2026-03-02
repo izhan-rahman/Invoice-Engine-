@@ -8,6 +8,16 @@
         @page {
             size: A4;
             margin: 0;
+
+            /* Page numbers only added below the banner on subsequent pages, handled dynamically by WeasyPrint */
+            @bottom-right {
+                content: "Page " counter(page) " of " counter(pages);
+                font-size: 7.5pt;
+                color: #888;
+                font-weight: 500;
+                padding-right: 30px;
+                padding-bottom: 20px;
+            }
         }
 
         body {
@@ -118,7 +128,7 @@
         </div>
 
         <table>
-            <thead>
+            <thead style="display: table-row-group;">
                 <tr>
                     <th width="50%">Description</th>
                     <th width="12%">HSN</th>

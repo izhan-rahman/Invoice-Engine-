@@ -11,8 +11,9 @@
 
             @bottom-right {
                 content: "Page " counter(page) " of " counter(pages);
-                font-size: 7pt;
-                color: #aaa;
+                font-size: 7.5pt;
+                color: #888;
+                font-weight: 500;
             }
         }
 
@@ -90,7 +91,7 @@
         }
 
         thead {
-            display: table-header-group;
+            display: table-row-group; /* Prevents repeating on new pages */
         }
 
         th {

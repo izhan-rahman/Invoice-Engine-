@@ -8,6 +8,13 @@
         @page {
             size: A4;
             margin: 10mm;
+            
+            @bottom-right {
+                content: "Page " counter(page) " of " counter(pages);
+                font-size: 7.5pt;
+                color: #888;
+                font-weight: 500;
+            }
         }
 
         body {
@@ -134,7 +141,7 @@
     </div>
 
     <table>
-        <thead>
+        <thead style="display: table-row-group;">
             <tr>
                 <th width="50%">Description</th>
                 <th width="12%">HSN</th>
