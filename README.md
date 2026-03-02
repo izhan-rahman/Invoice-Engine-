@@ -36,7 +36,7 @@ GET /api/v1/generate/invoice/{invoice_no}?template=zoho_blue&plant=test
 ```
 **Example:**
 ```
-GET http://YOUR_SERVER_IP:8000/api/v1/generate/invoice/IN05250000011?plant=test
+GET http://YOUR_SERVER_IP:8000/api/v1/generate/in?plant=test
 ```
 
 ### Generate Sales Order PDF
@@ -45,7 +45,7 @@ GET /api/v1/generate/sales/{do_no}?template=zoho_blue&plant=test
 ```
 **Example:**
 ```
-GET http://YOUR_SERVER_IP:8000/api/v1/generate/sales/S01250000108?plant=test
+GET http://YOUR_SERVER_IP:8000/api/v1/generate/?plant=test
 ```
 
 ### Test with Mock Data (no Java API needed)
@@ -98,5 +98,5 @@ docker compose up --build -d
 
 | Type | URL |
 |------|-----|
-| Invoice | `https://api-bi-buysell-service-ind.u-clo.com/owner-0.0.1/api/Reports/invoice` |
-| Sales | `https://api-bi-buysell-service-ind.u-clo.com/owner-0.0.1/api/Reports/sales` |
+| Invoice | `he` |
+| Sales |  |
