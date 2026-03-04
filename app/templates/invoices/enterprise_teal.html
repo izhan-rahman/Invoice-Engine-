@@ -59,10 +59,12 @@
             background-color: #f0f7f6;
             color: #004d40;
             text-align: left;
-            padding: 6px 10px;
+            padding: 6px 4px;
             font-weight: 700;
-            font-size: 7.5pt;
+            font-size: 7pt;
             text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
             -webkit-print-color-adjust: exact;
         }
 
@@ -91,6 +93,19 @@
             padding: 8px 12px;
             width: 50%;
             font-size: 7.5pt;
+        }
+
+        .footer-space {
+            height: 140px;
+        }
+
+        .footer-section {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            width: calc(100% - 60px);
+            display: table;
+            page-break-inside: avoid;
         }
     </style>
 </head>
@@ -128,18 +143,28 @@
         </div>
 
         <table>
+            <colgroup>
+                <col style="width: 6%">
+                <col style="width: 46%">
+                <col style="width: 12%">
+                <col style="width: 12%">
+                <col style="width: 12%">
+                <col style="width: 12%">
+            </colgroup>
             <thead style="display: table-row-group;">
                 <tr>
-                    <th width="50%">Description</th>
-                    <th width="12%">HSN</th>
-                    <th style="text-align: right;" width="8%">Qty</th>
-                    <th style="text-align: right;" width="15%">Rate</th>
-                    <th style="text-align: right;" width="15%">Amount</th>
+                    <th style="text-align: center;">S.No</th>
+                    <th>Description</th>
+                    <th>HSN</th>
+                    <th style="text-align: right;">Qty</th>
+                    <th style="text-align: right;">Rate</th>
+                    <th style="text-align: right;">Amount</th>
                 </tr>
             </thead>
             <tbody>
                 {% for item in items %}
                 <tr>
+                    <td style="text-align: center; font-weight: 700;">{{ loop.index }}</td>
                     <td>
                         <div style="font-weight: 700;">{{ item.desc }}</div>
                         {% if item.notes %}<div style="font-size: 7.5pt; color: #666; margin-top: 1px;">{{ item.notes }}
@@ -155,7 +180,8 @@
             </tbody>
         </table>
 
-        <div style="display: table; width: 100%;">
+        <div class="footer-space"></div>
+        <div class="footer-section">
             <div style="display: table-cell; vertical-align: top;">
                 <div class="bank-box">
                     <div
@@ -172,6 +198,10 @@
                         }}</strong></div>
                 <div class="total-strip">
                     TOTAL DUE: ₹ {{ "%.2f"|format(total) }}
+                </div>
+                <div style="margin-top: 20px; padding-top: 10px; border-top: 1px solid #b2dfdb;">
+                    <div style="font-size: 7pt; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 55px;">Authorized Signatory</div>
+                    <div style="border-top: 1px solid #004d40; width: 160px; margin-left: auto; padding-top: 4px; text-align: center; font-size: 7pt; color: #888;">Signature</div>
                 </div>
             </div>
         </div>

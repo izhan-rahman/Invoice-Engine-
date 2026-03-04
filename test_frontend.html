@@ -374,8 +374,8 @@
     </div>
 
     <script>
-        // Set to the live production server
-        const BASE_URL = "https://alpha-invoice-engine.onrender.com";
+        // Set to local running Uvicorn server for local testing
+        const BASE_URL = "http://localhost:8000";
 
         function addItem(desc = '', notes = '', hsn = '', qty = 1, rate = 0, tax = 'IGST') {
             const container = document.getElementById('items-container');
@@ -400,26 +400,60 @@
         function add300Items() {
             if (!confirm("This will add 300 items to the form. Are you sure?")) return;
 
-            const itemTypes = ["Consulting Services", "Hardware - Server Node", "Network Switch (48 Port)", "Annual Maintenance Contract", "Cloud Hosting Fee"];
-            const hsnCodes = ["998311", "84715000", "85176290", "998719", "998314"];
+            const shortItems = ["Consulting", "Hardware", "Switch", "Support", "Hosting"];
+            const longItems = [
+                "Comprehensive Annual Maintenance Contract for all primary data center switches",
+                "Phase 1 Cloud Migration Consulting including architecture review and security audit",
+                "Enterprise Edition Software License (Volume pricing tier 3) with premium 24/7 support",
+                "Custom UX/UI Design Services (Wireframes, Prototypes, and High-Fidelity Mockups for 10 pages)",
+                "Supply and installation of secure networking hardware across 3 branch offices"
+            ];
+            const extremeNotes = [
+                "Standard terms.",
+                "Urgent delivery requested by the client. Please ensure packaging is strictly weather-proof. Includes installation overhead.",
+                "REF: PO-99882. This line item is subject to the strict multi-phase rollout schedule agreed upon in the master services agreement signed on October 14th. Any delays will incur a 2% daily penalty. Warranty period extended to 36 months for hardware components only.",
+                "No notes.",
+                "Hardware specs: Intel Xeon Platinum, 256GB ECC RAM, 4TB NVMe SSD RAID 10. Pre-installed with Ubuntu 22.04 LTS."
+            ];
+            const hsnCodes = ["998311", "84715000", "85176290", "998719", "998314", ""];
 
             const btn = document.querySelector('button[onclick="add300Items()"]');
             btn.innerText = "Adding...";
             btn.disabled = true;
 
-            // Generate items
+            // Generate 300 highly varied items
             for (let i = 1; i <= 300; i++) {
-                const randIndex = Math.floor(Math.random() * itemTypes.length);
-                const desc = `Bulk Item #${i}: ` + itemTypes[randIndex];
-                const notes = `Detailed specs for item ${i} included in bulk order.`;
-                const hsn = hsnCodes[randIndex];
-                const qty = Math.floor(Math.random() * 5) + 1;
-                const rate = (Math.random() * 5000 + 500).toFixed(2);
+                // Randomly mix short, long, and extreme data
+                let desc = "";
+                if (i % 7 === 0) desc = `Item ${i}: ` + longItems[Math.floor(Math.random() * longItems.length)]; // Very long
+                else if (i % 3 === 0) desc = `Item ${i}: ${shortItems[Math.floor(Math.random() * shortItems.length)]} and ${shortItems[Math.floor(Math.random() * shortItems.length)]}`; // Medium
+                else desc = `Item ${i}: ` + shortItems[Math.floor(Math.random() * shortItems.length)]; // Short
+                
+                let notes = "";
+                if (Math.random() > 0.4) notes = extremeNotes[Math.floor(Math.random() * extremeNotes.length)]; // 60% chance of having notes
+                
+                const hsn = hsnCodes[Math.floor(Math.random() * hsnCodes.length)];
+                
+                // Varied numbers to test formatting
+                let qty, rate;
+                if (i % 15 === 0) {
+                    qty = 1000 + Math.floor(Math.random() * 5000); // Huge quantity
+                    rate = 0.05; // Tiny rate
+                } else if (i % 10 === 0) {
+                    qty = 1.5; // Decimal quantity
+                    rate = 250000.50; // Huge rate
+                } else {
+                    qty = Math.floor(Math.random() * 10) + 1;
+                    rate = (Math.random() * 5000 + 500).toFixed(2);
+                }
+                
+                const taxes = ["IGST", "CGST/SGST", "NONE"];
+                const tax = taxes[Math.floor(Math.random() * taxes.length)];
 
-                addItem(desc, notes, hsn, qty, rate, "IGST");
+                addItem(desc, notes, hsn, qty, rate, tax);
             }
 
-            btn.innerText = "+ Added 300 Test Items";
+            btn.innerText = "+ Added 300 Varied Test Items";
         }
 
         function buildPayload() {

@@ -41,3 +41,4 @@ test_invoice.pdf
 expose_public.bat
 setup_git.bat
 setup_env.py
+invoice-ui/

@@ -112,3 +112,5 @@ async def download_invoice(request: Request):
     data = await request.json()
     pdf_bytes = generate_pdf_bytes(data)
     return Response(content=pdf_bytes, media_type="application/pdf", headers={"Content-Disposition": "attachment; filename=invoice.pdf"})
+
+

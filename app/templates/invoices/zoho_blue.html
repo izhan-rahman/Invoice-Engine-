@@ -98,10 +98,12 @@
             background-color: #00458a;
             color: white;
             text-align: left;
-            padding: 5px 8px;
+            padding: 5px 4px;
             font-weight: 700;
             text-transform: uppercase;
-            font-size: 7.5pt;
+            font-size: 7pt;
+            white-space: nowrap;
+            overflow: hidden;
         }
 
         td {
@@ -127,11 +129,17 @@
             line-height: 1.1;
         }
 
+        .footer-space {
+            height: 160px;
+        }
+
         .footer-section {
-            display: table;
+            position: absolute;
+            bottom: 0;
+            left: 0;
             width: 100%;
+            display: table;
             page-break-inside: avoid;
-            margin-top: 5px;
         }
 
         .bank-details,
@@ -214,18 +222,28 @@
     </div>
 
     <table>
+        <colgroup>
+            <col style="width: 6%">
+            <col style="width: 46%">
+            <col style="width: 12%">
+            <col style="width: 12%">
+            <col style="width: 12%">
+            <col style="width: 12%">
+        </colgroup>
         <thead>
             <tr>
-                <th width="48%">Item & Description</th>
-                <th width="10%" style="text-align: center;">HSN</th>
-                <th width="8%" style="text-align: center;">Qty</th>
-                <th width="14%" style="text-align: right;">Rate</th>
-                <th width="20%" style="text-align: right;">Amount</th>
+                <th style="text-align: center;">S.No</th>
+                <th>Description</th>
+                <th style="text-align: center;">HSN</th>
+                <th style="text-align: center;">Qty</th>
+                <th style="text-align: right;">Rate</th>
+                <th style="text-align: right;">Amount</th>
             </tr>
         </thead>
         <tbody>
             {% for item in items %}
             <tr>
+                <td style="text-align: center; font-weight: 700;">{{ loop.index }}</td>
                 <td>
                     <span class="item-desc">{{ item.desc }}</span>
                     {% if item.notes %}<div class="item-notes">{{ item.notes }}</div>{% endif %}
@@ -239,6 +257,7 @@
         </tbody>
     </table>
 
+    <div class="footer-space"></div>
     <div class="footer-section">
         <div class="bank-details">
             <div class="bank-card">
@@ -280,9 +299,9 @@
                 <div class="summary-value">₹ {{ "%.2f"|format(total) }}</div>
             </div>
 
-            <div style="margin-top: 15px; text-align: right;">
-                <div style="font-size: 7pt; color: #999; text-transform: uppercase;">Authorized Signatory</div>
-                <div style="margin-top: 25px; border-top: 1px solid #ddd; display: inline-block; width: 120px;"></div>
+            <div style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 10px;">
+                <div style="font-size: 7pt; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 60px;">Authorized Signatory</div>
+                <div style="border-top: 1px solid #aaa; width: 180px; margin-left: auto; padding-top: 4px; text-align: center; font-size: 7pt; color: #888;">Signature</div>
             </div>
         </div>
     </div>
