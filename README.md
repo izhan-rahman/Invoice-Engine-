@@ -71,7 +71,6 @@ GET /api/v1/debug/sales/{do_no}
 | Value | Style |
 |-------|-------|
 | `zoho_blue` | Professional blue (default) |
-| `stripe_minimal` | Clean minimal |
 | `enterprise_teal` | Enterprise teal |
 
 ---
