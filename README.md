@@ -98,5 +98,5 @@ docker compose up --build -d
 
 | Type | URL |
 |------|-----|
-| Invoice | `https://api-bi-buysell-service-ind.u-clo.com/owner-0.0.1/api/Reports/invoice` |
-| Sales | `https://api-bi-buysell-service-ind.u-clo.com/owner-0.0.1/api/Reports/sales` |
+| Invoice | `` |
+| Sales | `` |
