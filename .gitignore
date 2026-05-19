@@ -36,9 +36,16 @@ qa_results*.txt
 qa_results_final.txt
 test_results.txt
 test_invoice.pdf
+test_raw_invoice.pdf
+test_raw_sales.pdf
 
 # Windows-only helper scripts (not needed on Linux server)
 expose_public.bat
 setup_git.bat
 setup_env.py
 invoice-ui/
+
+# Executables and Bundles
+InvoiceEngine.exe
+InvoiceEngine.spec
+InvoiceEngine_v1.0.zip

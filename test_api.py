@@ -2,7 +2,7 @@ import urllib.request
 import urllib.error
 import json
 
-BASE_URL = "https://alpha-invoice-engine.onrender.com"
+BASE_URL = "http://localhost:8000"
 
 def test_endpoint(method, path, data=None):
     url = BASE_URL + path

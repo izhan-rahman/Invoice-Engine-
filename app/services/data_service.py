@@ -58,19 +58,19 @@ def fetch_invoice_data(invoice_no, plant="test"):
     details = results.get("invoiceDetList", [])
 
     return {
-        "invoice_number": hdr.get("invoiceNo"),
+        "invoice_number": hdr.get("invoice", hdr.get("invoiceNo")),
         "date":           hdr.get("invoiceDate"),
         "due_date":       hdr.get("dueDate", hdr.get("invoiceDate")),
         "customer": {
-            "name":    cust.get("customerName"),
-            "address": f"{cust.get('addressROne','')} {cust.get('addressRTwo','')} {cust.get('addressRThree','')} {cust.get('addressRFour','')}".strip(),
+            "name":    cust.get("customerName", cust.get("name")),
+            "address": f"{cust.get('addressROne','')} {cust.get('addressRTwo','')} {cust.get('addressRThree','')} {cust.get('addressRFour','')} {cust.get('state','')} {cust.get('country','')} {cust.get('zip','')}".strip(),
             "gstin":   cust.get("rcbNo", "N/A"),
             "email":   cust.get("email"),
-            "phone":   cust.get("telephoneNo")
+            "phone":   cust.get("telephoneNo", cust.get("hpNo"))
         },
         "items": [
             {
-                "desc":     item.get("item"),
+                "desc":     item.get("item", "Item"),
                 "notes":    item.get("note"),
                 "hsn":      "N/A",
                 "qty":      item.get("qty", 0),
@@ -129,8 +129,8 @@ def fetch_sales_data(do_no, plant="test"):
         "date":           hdr.get("delDate"),
         "due_date":       hdr.get("collectionDate"),
         "customer": {
-            "name":    cust.get("customerName"),
-            "address": f"{cust.get('addressROne','')} {cust.get('addressRTwo','')} {cust.get('addressRThree','')} {cust.get('addressRFour','')}".strip(),
+            "name":    cust.get("customerName", cust.get("name")),
+            "address": f"{cust.get('addressROne','')} {cust.get('addressRTwo','')} {cust.get('addressRThree','')} {cust.get('addressRFour','')} {cust.get('state','')} {cust.get('country','')} {cust.get('zip','')}".strip(),
             "gstin":   cust.get("rcbNo", "N/A")
         },
         "items": [
@@ -142,3 +142,66 @@ def fetch_sales_data(do_no, plant="test"):
             } for item in details
         ]
     }
+
+
+def process_raw_invoice_json(data):
+    """Processes raw JSON from the Java Invoice API format"""
+    results = data.get("results", {})
+    hdr     = results.get("invoiceHdr", {})
+    cust    = results.get("customer", {})
+    details = results.get("invoiceDetList", [])
+
+    return {
+        "invoice_number": hdr.get("invoice", hdr.get("invoiceNo")),
+        "date":           hdr.get("invoiceDate"),
+        "due_date":       hdr.get("dueDate", hdr.get("invoiceDate")),
+        "currency":       hdr.get("currencyId", "USD"),
+        "job_no":         hdr.get("jobNum", ""),
+        "customer": {
+            "name":    cust.get("customerName", cust.get("name")),
+            "address": f"{cust.get('addressROne','')} {cust.get('addressRTwo','')} {cust.get('addressRThree','')} {cust.get('addressRFour','')} {cust.get('state','')} {cust.get('country','')} {cust.get('zip','')}".strip(),
+            "gstin":   cust.get("rcbNo", "N/A"),
+            "email":   cust.get("email"),
+            "phone":   cust.get("telephoneNo", cust.get("hpNo"))
+        },
+        "items": [
+            {
+                "desc":     item.get("item", "Item"),
+                "notes":    item.get("note"),
+                "hsn":      "N/A",
+                "qty":      item.get("qty", 0),
+                "rate":     item.get("unitPrice", 0),
+                "tax_type": item.get("taxType")
+            } for item in details
+        ],
+        "tax_rate": hdr.get("outboundGst", 0)
+    }
+
+
+def process_raw_sales_json(data):
+    """Processes raw JSON from the Java Sales API format"""
+    results = data.get("results", {})
+    hdr     = results.get("doHdr", {})
+    cust    = results.get("customer", {})
+    details = results.get("dodetList", [])
+
+    return {
+        "invoice_number": hdr.get("doNo"),
+        "date":           hdr.get("delDate"),
+        "due_date":       hdr.get("collectionDate"),
+        "currency":       hdr.get("currencyId", "USD"),
+        "customer": {
+            "name":    cust.get("customerName", cust.get("name")),
+            "address": f"{cust.get('addressROne','')} {cust.get('addressRTwo','')} {cust.get('addressRThree','')} {cust.get('addressRFour','')} {cust.get('state','')} {cust.get('country','')} {cust.get('zip','')}".strip(),
+            "gstin":   cust.get("rcbNo", "N/A")
+        },
+        "items": [
+            {
+                "desc":  item.get("itemDescription", item.get("item")),
+                "notes": item.get("userFieldOne"),
+                "qty":   item.get("quantityIs", 0),
+                "rate":  item.get("unitPrice", 0)
+            } for item in details
+        ]
+    }
+

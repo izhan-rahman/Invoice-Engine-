@@ -1,16 +1,30 @@
 import jinja2
 from pathlib import Path
 import sys
+import os
+
+# --- DYNAMIC PATH RESOLUTION ---
+# When running as a PyInstaller EXE, sys._MEIPASS is the path to the temporary extraction folder.
+# When running from source, we use the current working directory.
+BASE_PATH = Path(getattr(sys, '_MEIPASS', os.getcwd()))
+
+# --- GTK PATH LOGIC FOR EXE ---
+# GTK binaries are bundled into bin/gtk3 inside the EXE
+gtk_bin_path = BASE_PATH / "bin" / "gtk3"
+
+if gtk_bin_path.exists():
+    os.environ['PATH'] = str(gtk_bin_path) + os.pathsep + os.environ.get('PATH', '')
 
 try:
     from weasyprint import HTML, CSS
-except ImportError:
-    print("GTK3 libraries not found in PATH. Ensure bin/gtk3/bin is in PATH.")
+except Exception as e:
+    print(f"Error loading WeasyPrint: {e}")
+    print("GTK3 libraries not found in PATH. Ensure bin/gtk3 is in PATH.")
     HTML = None
     CSS = None
 
-TEMPLATE_DIR = Path("app/templates")
-STATIC_DIR = Path("app/static")
+TEMPLATE_DIR = BASE_PATH / "app" / "templates"
+STATIC_DIR = BASE_PATH / "app" / "static"
 
 env = jinja2.Environment(
     loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
@@ -20,7 +34,6 @@ env = jinja2.Environment(
 def _get_template_name(style_code):
     mapping = {
         'zoho_blue': 'invoices/zoho_blue.html',
-        'stripe_minimal': 'invoices/stripe_minimal.html',
         'enterprise_teal': 'invoices/enterprise_teal.html',
     }
     return mapping.get(style_code, 'invoices/zoho_blue.html')

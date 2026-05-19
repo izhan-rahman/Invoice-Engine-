@@ -24,7 +24,16 @@
                     </div>
                 </div>
                 <div class="card p-3 mb-3">
-                     <button type="button" class="btn btn-danger w-100 mb-2" onclick="stressTest()">🔥 Stress Test (60 Items)</button>
+                    <label class="form-label small text-muted font-weight-bold">MANUAL JSON INPUT (JAVA FORMAT)</label>
+                    <select class="form-select mb-2" id="jsonType">
+                        <option value="invoice">Invoice JSON</option>
+                        <option value="sales">Sales Order JSON</option>
+                    </select>
+                    <textarea class="form-control mb-2" id="rawJson" rows="5" placeholder="Paste Java JSON here..."></textarea>
+                    <button type="button" class="btn btn-success btn-sm w-100" onclick="processRawJson()">Process Raw JSON</button>
+                </div>
+                <div class="card p-3 mb-3">
+                     <button type="button" class="btn btn-danger w-100 mb-2" onclick="stressTest()">🔥 Stress Test (500 Items)</button>
                      <button type="button" class="btn btn-primary w-100 mb-2" onclick="updatePreview()">Refresh Preview</button>
                      <button type="button" class="btn btn-dark w-100" onclick="downloadPdf()">Download PDF</button>
                 </div>
@@ -36,6 +45,27 @@
         let currentTemplate = 'zoho_blue';
         let items = [{desc: "Consulting", hsn: "998314", qty: 1, rate: 5000}];
 
+        async function processRawJson() {
+            const raw = document.getElementById('rawJson').value;
+            const type = document.getElementById('jsonType').value;
+            if(!raw) return alert("Please paste some JSON");
+            
+            try {
+                const parsed = JSON.parse(raw);
+                const endpoint = type === 'invoice' ? '/api/v1/process/invoice-json' : '/api/v1/process/sales-json';
+                const res = await fetch(endpoint, { 
+                    method: 'POST', 
+                    headers: {'Content-Type': 'application/json'}, 
+                    body: JSON.stringify(parsed) 
+                });
+                if(!res.ok) throw new Error("Processing failed");
+                const blob = await res.blob();
+                document.getElementById('pdfPreview').src = window.URL.createObjectURL(blob);
+            } catch(e) {
+                alert("Invalid JSON format or processing error: " + e.message);
+            }
+        }
+
         function setTemplate(name, el) { 
             currentTemplate = name; 
             document.querySelectorAll('.card-select').forEach(c => c.classList.remove('active'));
@@ -45,7 +75,7 @@
 
         function stressTest() {
             items = [];
-            for(let i=1; i<=60; i++) {
+            for(let i=1; i<=500; i++) {
                 let desc = `Service Item ${i}`;
                 if(i%5===0) desc += " - Detailed analysis of system architecture and compliance review.";
                 items.push({desc: desc, hsn: "9983", qty: 1, rate: parseFloat((Math.random()*100).toFixed(2))});

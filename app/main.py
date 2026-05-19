@@ -4,8 +4,20 @@ from fastapi.responses import HTMLResponse, Response, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from app.services.pdf_service import generate_pdf_bytes
-from app.services.data_service import fetch_invoice_data, fetch_sales_data
+from app.services.data_service import (
+    fetch_invoice_data, 
+    fetch_sales_data,
+    process_raw_invoice_json,
+    process_raw_sales_json
+)
 from app.api.demo_router import router as demo_router
+import os
+import sys
+from pathlib import Path
+
+# --- DYNAMIC PATH RESOLUTION ---
+BASE_PATH = Path(getattr(sys, '_MEIPASS', os.getcwd()))
+
 import requests
 
 app = FastAPI(title="Invoice Engine Pro")
@@ -20,8 +32,8 @@ app.add_middleware(
 
 app.include_router(demo_router)
 
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
-templates = Jinja2Templates(directory="app/templates")
+app.mount("/static", StaticFiles(directory=str(BASE_PATH / "app" / "static")), name="static")
+templates = Jinja2Templates(directory=str(BASE_PATH / "app" / "templates"))
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
@@ -30,7 +42,7 @@ async def read_root(request: Request):
 # --- EXTERNAL INTEGRATION ENDPOINTS ---
 
 @app.get("/api/v1/generate/invoice/{invoice_no}")
-async def generate_from_external_invoice(
+def generate_from_external_invoice(
     invoice_no: str, 
     template: str = "zoho_blue",
     plant: str = "test"
@@ -57,7 +69,7 @@ async def generate_from_external_invoice(
         return JSONResponse({"status": "error", "message": str(e)}, status_code=500)
 
 @app.get("/api/v1/generate/sales/{do_no}")
-async def generate_from_external_sales(
+def generate_from_external_sales(
     do_no: str, 
     template: str = "zoho_blue",
     plant: str = "test"
@@ -100,17 +112,55 @@ async def debug_external_sales(do_no: str, plant: str = "test"):
 
 
 @app.post("/preview")
-async def preview_invoice(request: Request):
-    data = await request.json()
+def preview_invoice(data: dict):
     pdf_bytes = generate_pdf_bytes(data)
     return Response(content=pdf_bytes, media_type="application/pdf")
 
 
 
 @app.post("/download")
-async def download_invoice(request: Request):
-    data = await request.json()
+def download_invoice(data: dict):
     pdf_bytes = generate_pdf_bytes(data)
     return Response(content=pdf_bytes, media_type="application/pdf", headers={"Content-Disposition": "attachment; filename=invoice.pdf"})
 
+# --- RAW JSON INPUT ENDPOINTS ---
 
+@app.post("/api/v1/process/invoice-json")
+async def process_invoice_json(data: dict):
+    """Processes raw Invoice JSON and returns a PDF"""
+    try:
+        mapped_data = process_raw_invoice_json(data)
+        # Add a default template if not provided
+        if 'template_style' not in mapped_data:
+            mapped_data['template_style'] = 'zoho_blue'
+            
+        pdf_bytes = generate_pdf_bytes(mapped_data)
+        return Response(
+            content=pdf_bytes, 
+            media_type="application/pdf",
+            headers={"Content-Disposition": "inline; filename=invoice.pdf"}
+        )
+    except Exception as e:
+        return JSONResponse({"status": "error", "message": str(e)}, status_code=500)
+
+@app.post("/api/v1/process/sales-json")
+async def process_sales_json(data: dict):
+    """Processes raw Sales Order JSON and returns a PDF"""
+    try:
+        mapped_data = process_raw_sales_json(data)
+        if 'template_style' not in mapped_data:
+            mapped_data['template_style'] = 'zoho_blue'
+            
+        pdf_bytes = generate_pdf_bytes(mapped_data)
+        return Response(
+            content=pdf_bytes, 
+            media_type="application/pdf",
+            headers={"Content-Disposition": "inline; filename=sales_order.pdf"}
+        )
+    except Exception as e:
+        return JSONResponse({"status": "error", "message": str(e)}, status_code=500)
+
+if __name__ == "__main__":
+    import uvicorn
+    # Use frozen=True for pyinstaller compatibility or simply run
+    uvicorn.run(app, host="0.0.0.0", port=8000)
